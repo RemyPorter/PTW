@@ -1,6 +1,7 @@
 from pygit2 import *
 import collections
 import enum
+from hashwords import FriendlyHash
 class NoRepoError(Exception) : pass
 
 StatusEntry = collections.namedtuple("StatusEntry", "file statuses")
@@ -37,7 +38,9 @@ class Repo:
 	def status(self):
 		return [StatusEntry(x[0], statusforcode(x[1])) for x in self.git.status().items()]
 
-	def log(self):
-		
+	def log_entries(self):
+		last = self.git[self.git.head.target]
+		for commit in self.git.walk(last.id, GIT_SORT_TIME):
+			yield (FriendlyHash(commit.id), commit)
 
 	
