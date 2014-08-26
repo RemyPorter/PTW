@@ -2,8 +2,11 @@ import linecache
 import math
 from mmap import mmap
 from collections import namedtuple
+import os.path
+import inspect
 
-__file = open("all.padded", "r+b")
+__base = os.path.realpath(os.path.abspath(os.path.split(inspect.getfile( inspect.currentframe() ))[0]))
+__file = open(__base + "/" + "all.padded", "r+b")
 __mapped = mmap(__file.fileno(),0)
 
 def dehash(hash):
