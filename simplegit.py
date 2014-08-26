@@ -1,7 +1,7 @@
 from pygit2 import *
 import collections
 import enum
-from hash.words import dehash
+from hashed.words import dehash
 class NoRepoError(Exception) : pass
 
 StatusEntry = collections.namedtuple("StatusEntry", "file statuses")
