@@ -1,11 +1,20 @@
 import linecache
 import math
 from mmap import mmap
+from collections import namedtuple
 
-def mappedhash(hash, wordlist="all.padded", address_size=4, line_size=15, character_size=2):
+__file = open("all.padded", "r+b")
+__mapped = mmap(__file.fileno(),0)
+
+def dehash(hash):
+	return FriendlyHash(hash, mappedhash(hash))
+
+
+def mappedhash(hash, address_size=4, line_size=15, character_size=2):
+	global __file, __mapped
 	words = []
-	f = open(wordlist, "r+b")
-	mapped = mmap(f.fileno(), 0)
+	f = __file
+	mapped = __mapped
 	for i in range(0, len(hash), address_size):
 		hx = "00"
 		try:
@@ -33,17 +42,9 @@ def wordhash(hash, wordlist="all.short", address_size=4):
 		words += [word]
 
 	return " ".join(words)
-		
-class FriendlyHash(str):
-	def __new__(cls, value, worder=wordhash):
-		instance = super().__new__(cls, value)
-		instance.__friendly = False
-		instance.__text = ""
-		return instance
 
-	@property
-	def friendly(self):
-		if not self.__friendly:
-			self.__text = wordhash(self)
-			self.__friendly = True
-		return self.__text
+FriendlyHash = namedtuple("FriendlyHash", "hash friendly")
+
+
+
+
