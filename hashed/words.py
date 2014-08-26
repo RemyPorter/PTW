@@ -10,10 +10,19 @@ import inspect
 from mmap import mmap
 from collections import namedtuple
 import os.path
+import gzip
+import json
+
+def default():
+	return None
 
 __base = os.path.realpath(os.path.abspath(os.path.split(inspect.getfile( inspect.currentframe() ))[0]))
 __file = open(__base + "/" + "all.padded", "r+b")
 __mapped = mmap(__file.fileno(),0)
+__index = None
+with gzip.open("index", "rb") as f:
+	data = f.read()
+	__index = json.loads(data.decode("UTF8"))
 
 def dehash(hash):
 	"""Given a string containing hexadecimal digits, returns a FriendlyHash tuple containing the original string and a "friendly" version
@@ -24,6 +33,10 @@ def dehash(hash):
 	"""
 	return FriendlyHash(hash, mappedhash(hash))
 
+def get_at_address(line, line_size, character_size):
+	address = line_size * character_size * line-line_size*character_size
+	word = __mapped[address:address+line_size*character_size]
+	return word.decode("UTF16").strip()
 
 def mappedhash(hash, address_size=4, line_size=15, character_size=2):
 	"""
@@ -43,10 +56,39 @@ def mappedhash(hash, address_size=4, line_size=15, character_size=2):
 			hx = hash[-address_size:0]
 
 		line = int(hx, 16)
-		address = line_size * character_size * line-line_size*character_size
-		word = mapped[address:address+line_size*character_size]
-		words += [word.decode("UTF" + str(character_size*8)).strip()]
+		word = get_at_address(line, line_size, character_size)
+		words += [word]
 	return " ".join(words)
+
+def enhash(words, address_size=4):
+	"""
+	Given a word string, containing only words in all.padded, return the hash that it comes from.
+	>>> enhash('disbowel obi magnetises famous oblivious divulgence thickened welders foiningly votresses')
+	'3bc491b57f3a4d1a91da3daae16dfa0052aff75f'
+	"""
+	l = words.split(" ")
+	test = ""
+	hsh = ""
+	for word in l:
+		(bottom,top) = __index[word[:3]]
+		mid = (top - bottom) // 2 + bottom
+		found = False
+		while not found:
+			test = get_at_address(mid, 15,2)
+			if test == word:
+				break
+			elif test < word:
+				bottom = mid
+				mid = (top - bottom) // 2 + bottom
+			elif test > word:
+				top = mid
+				mid = (top - bottom) // 2 + bottom
+		hsh += hex(mid).strip("0x").ljust(address_size, "0")
+	return hsh
+
+def get_index():
+	return __index
+
 
 FriendlyHash = namedtuple("FriendlyHash", "hash friendly")
 

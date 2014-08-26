@@ -43,4 +43,13 @@ class Repo:
 		for commit in self.git.walk(last.id, GIT_SORT_TIME):
 			yield (dehash(str(commit.id)), commit)
 
+	def cache_log(self):
+		self.__cached_commits = dict()
+		for entry in self.log_entries:
+			self.__cached_commits[entry[0].friendly] = entry
+
+	@property
+	def cached_commits(self):
+		return self.__cached_commits
+
 	
