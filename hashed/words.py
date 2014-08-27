@@ -4,7 +4,7 @@ A module to create a friendly representation of an underlying hash object. Uses 
 all.padded is a UTF-16 encoded file with one string every bytes.
 
 >>> dehash("21046fd2f17ac0f30c88190393568045256866f2")
-FriendlyHash(hash='21046fd2f17ac0f30c88190393568045256866f2', friendly='cassareep irascibly upbrought scorched atheized bourtrees oloroso manful chobdar hornbook')
+'cassareep irascibly upbrought scorched atheized bourtrees oloroso manful chobdar hornbook'
 """
 import inspect
 from mmap import mmap
@@ -29,9 +29,11 @@ def dehash(hash):
 	from mappedhash. Depends on the contents of all.padded.
 
 	>>> dehash("3bc491b57f3a4d1a91da3daae16dfa0052aff75f")
-	FriendlyHash(hash='3bc491b57f3a4d1a91da3daae16dfa0052aff75f', friendly='disbowel obi magnetises famous oblivious divulgence thickened welders foiningly votresses')
+	'disbowel obi magnetises famous oblivious divulgence thickened welders foiningly votresses'
+	>>> dehash("bff2cdc22f22b79fee98bfa3205a0b12912fabd0")
+	'scatology solen courtier retrofit unmasking scantling carjacks arrestors nunship puffball'
 	"""
-	return FriendlyHash(hash, mappedhash(hash))
+	return mappedhash(hash)
 
 def get_at_address(line, line_size, character_size):
 	address = line_size * character_size * line-line_size*character_size
@@ -66,6 +68,8 @@ def enhash(words, address_size=4):
 	wordlist only contains "valid" words, off the all.padded list. It may enter an infinite loop otherwise. (I will fix that, probably)
 	>>> enhash('disbowel obi magnetises famous oblivious divulgence thickened welders foiningly votresses')
 	'3bc491b57f3a4d1a91da3daae16dfa0052aff75f'
+	>>> enhash('scatology solen courtier retrofit unmasking scantling carjacks arrestors nunship puffball')
+	'bff2cdc22f22b79fee98bfa3205a0b12912fabd0'
 	"""
 	l = words.split(" ")
 	test = ""
