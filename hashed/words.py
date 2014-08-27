@@ -62,7 +62,8 @@ def mappedhash(hash, address_size=4, line_size=15, character_size=2):
 
 def enhash(words, address_size=4):
 	"""
-	Given a word string, containing only words in all.padded, return the hash that it comes from.
+	Given a word string, containing only words in all.padded, return the hash that it comes from. This assumes that the supplied 
+	wordlist only contains "valid" words, off the all.padded list. It may enter an infinite loop otherwise. (I will fix that, probably)
 	>>> enhash('disbowel obi magnetises famous oblivious divulgence thickened welders foiningly votresses')
 	'3bc491b57f3a4d1a91da3daae16dfa0052aff75f'
 	"""
@@ -72,8 +73,8 @@ def enhash(words, address_size=4):
 	for word in l:
 		(bottom,top) = __index[word[:3]]
 		mid = (top - bottom) // 2 + bottom
-		found = False
-		while not found:
+
+		while True:
 			test = get_at_address(mid, 15,2)
 			if test == word:
 				break
@@ -83,6 +84,7 @@ def enhash(words, address_size=4):
 			elif test > word:
 				top = mid
 				mid = (top - bottom) // 2 + bottom
+
 		hsh += hex(mid).strip("0x").ljust(address_size, "0")
 	return hsh
 
