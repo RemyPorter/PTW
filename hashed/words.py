@@ -20,7 +20,7 @@ __base = os.path.realpath(os.path.abspath(os.path.split(inspect.getfile( inspect
 __file = open(__base + "/" + "all.padded", "r+b")
 __mapped = mmap(__file.fileno(),0)
 __index = None
-with gzip.open("index", "rb") as f:
+with gzip.open(__base + "/" + "index", "rb") as f:
 	data = f.read()
 	__index = json.loads(data.decode("UTF8"))
 
@@ -85,7 +85,7 @@ def enhash(words, address_size=4):
 				top = mid
 				mid = (top - bottom) // 2 + bottom
 
-		hsh += hex(mid).strip("0x").ljust(address_size, "0")
+		hsh += hex(mid)[2:].rjust(address_size, "0")
 	return hsh
 
 def get_index():

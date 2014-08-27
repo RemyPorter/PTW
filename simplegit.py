@@ -1,7 +1,7 @@
 from pygit2 import *
 import collections
 import enum
-from hashed.words import dehash
+from hashed.words import dehash, enhash
 class NoRepoError(Exception) : pass
 
 StatusEntry = collections.namedtuple("StatusEntry", "file statuses")
@@ -42,5 +42,9 @@ class Repo:
 		last = self.git[self.git.head.target]
 		for commit in self.git.walk(last.id, GIT_SORT_TIME):
 			yield (dehash(str(commit.id)), commit)
+
+	def get_object_by_words(self, sentence):
+		hashed = enhash(sentence)
+		return self.git.get(hashed)
 
 	
