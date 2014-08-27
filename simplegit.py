@@ -47,4 +47,7 @@ class Repo:
 		hashed = enhash(sentence)
 		return self.git.get(hashed)
 
+	def __get_item__(self, index):
+		return self.get_object_by_words(index)
+
 	
