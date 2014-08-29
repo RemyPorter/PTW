@@ -72,12 +72,22 @@ class Bundle(collections.Iterable):
 		self.__lines = [item] + self.__lines
 
 	def __entrystring(self, entry):
-		return '"{0.description}",{0.path}'.format(entry)
+		if entry.description:
+			return '{0.path},{0.description}'.format(entry)
+		else:
+			return entry.path
 
-	def write(self):
-		with open(self.bundleFile, "w") as output:
+	@loadguard
+	def write(self, destination=None):
+		if destination == None:
+			destination = self.bundleFile
+		currentSection = None
+		with open(destination, "w") as output:
 			for l in self.__lines:
-				output.write(self.__entrystring(l))
+				if currentSection != l.section:
+					output.write("#" + l.section + "\n")
+					currentSection = l.section
+				output.write(self.__entrystring(l) + "\n")
 
 class BundleProcessor:
 	def __init__(self, bundle):
