@@ -32,27 +32,16 @@ def __init__():
 
 __init__()
 
-def dehash(hash):
+def dehash(hash, address_size=4,line_size=15,character_size=2):
 	"""Given a string containing hexadecimal digits, returns a FriendlyHash tuple containing the original string and a "friendly" version
-	from mappedhash. Depends on the contents of all.padded.
+	from mappedhash. Depends on the contents of all.padded. Address size is the number of hex digits used per word,
+	and should be related to the underlying word-file. Line size is how many characters make up a word block, and character size
+	is the number of bytes per character.
 
 	>>> dehash("3bc491b57f3a4d1a91da3daae16dfa0052aff75f")
 	'disbowel obi magnetises famous oblivious divulgence thickened welders foiningly votresses'
 	>>> dehash("bff2cdc22f22b79fee98bfa3205a0b12912fabd0")
 	'scatology solen courtier retrofit unmasking scantling carjacks arrestors nunship puffball'
-	"""
-	return mappedhash(hash)
-
-def get_at_address(line, line_size, character_size):
-	address = line_size * character_size * line-line_size*character_size
-	word = __mapped[address:address+line_size*character_size]
-	return word.decode("UTF16").strip()
-
-def mappedhash(hash, address_size=4, line_size=15, character_size=2):
-	"""
-	Returns a string that uniquely identifies an input hash. Depends on the contents of all.padded, which is the data file.
-	>>> mappedhash("3bc491b57f3a4d1a91da3daae16dfa0052aff75f")
-	'disbowel obi magnetises famous oblivious divulgence thickened welders foiningly votresses'
 	"""
 	global __file, __mapped
 	words = []
@@ -69,6 +58,11 @@ def mappedhash(hash, address_size=4, line_size=15, character_size=2):
 		word = get_at_address(line, line_size, character_size)
 		words += [word]
 	return " ".join(words)
+
+def get_at_address(line, line_size, character_size):
+	address = line_size * character_size * line-line_size*character_size
+	word = __mapped[address:address+line_size*character_size]
+	return word.decode("UTF16").strip()	
 
 def enhash(words, address_size=4):
 	"""
