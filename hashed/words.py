@@ -6,12 +6,9 @@ all.padded is a UTF-16 encoded file with one string every bytes.
 >>> dehash("21046fd2f17ac0f30c88190393568045256866f2")
 'cassareep irascibly upbrought scorched atheized bourtrees oloroso manful chobdar hornbook'
 """
-import inspect
+import inspect, os.path, gzip, json
 from mmap import mmap
 from collections import namedtuple
-import os.path
-import gzip
-import json
 
 def default():
 	return None
