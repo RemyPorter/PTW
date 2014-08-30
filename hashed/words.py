@@ -23,7 +23,7 @@ __index = None
 def __init__():
 	global __file, __mapped, __index
 	__base = os.path.realpath(os.path.abspath(os.path.split(inspect.getfile( inspect.currentframe() ))[0]))
-	__file = open(__base + "/" + "all.padded", "r+b")
+	__file = open(__base + "/" + "wordlist", "r+b")
 	__mapped = mmap(__file.fileno(),0)
 	__index = None
 	with gzip.open(__base + "/" + "index", "rb") as f:
