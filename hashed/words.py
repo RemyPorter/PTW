@@ -10,9 +10,6 @@ import inspect, os.path, gzip, json
 from mmap import mmap
 from collections import namedtuple
 
-def default():
-	return None
-
 __file = None
 __mapped = None
 __index = None
