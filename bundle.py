@@ -2,6 +2,7 @@ from pyparsing import *
 import os.path as pth
 from collections import namedtuple
 import collections
+from markdown import markdownFromFile
 
 Entry = namedtuple("Entry", "description path section")
 
@@ -103,7 +104,11 @@ class BundleProcessor:
 		except Exception as err:
 			print("Failed to open file: {0}".format(err))
 
-	def merge_to(self, output_path):
+	def markdown(self, output_path, exts=None):
+		extensions = ['abbr','fenced_code','footnotes','tables','codehilite','smarty','toc', 'attr_list','def_list']
+		markdownFromFile(output_path, output_path + ".html", output_format="html5", extensions=extensions if exts==None else exts)
+
+	def merge_to(self, output_path, markdown=False, exts=None):
 		lastSection = ""
 		try:
 			with open(output_path, "w") as output:
@@ -115,5 +120,7 @@ class BundleProcessor:
 						output.write("## {0}\n".format(input.description))
 					for line in self.__get(input.path):
 						output.write(line + "\n")
+			if markdown:
+				self.markdown(output_path)
 		except Exception as err:
 			print("Error writing: {0}".format(err))
