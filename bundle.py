@@ -2,7 +2,7 @@ from pyparsing import *
 import os.path as pth
 from collections import namedtuple
 import collections
-from markdown import markdownFromFile
+import markdownstyle
 
 Entry = namedtuple("Entry", "description path section")
 
@@ -20,6 +20,7 @@ class Bundle(collections.Iterable):
 		self.__lines = []
 		self.__instance = Entry(None, None, None)
 		self.__currentsection = None
+		self.__stylesheets = None
 		self.__buildgrammar()
 
 	def __buildgrammar(self):
@@ -27,12 +28,16 @@ class Bundle(collections.Iterable):
 		DESCRIPTION = Suppress(",") + restOfLine("Description")
 		ENTRY = Combine(PATH + Optional(DESCRIPTION))("entry").setParseAction(self.__entry)
 		SECTION = Combine(Suppress("#") + restOfLine("Section")).setParseAction(self.__section)
+		STYLE = Combine(Suppress("$") + restOfLine("style")).setParseAction(self.__style)
 		LINE = SECTION | ENTRY
-		BUNDLE = ZeroOrMore(LINE)
+		BUNDLE = ZeroOrMore(STYLE) + ZeroOrMore(LINE)
 		self.BUNDLE = BUNDLE
 		self.LINE = LINE
 		self.ENTRY = ENTRY
 		self.SECTION = SECTION
+
+	def __style(self, style):
+		self.__stylesheets = style.style.split(",")
 
 	
 	def __section(self, section):
@@ -84,11 +89,17 @@ class Bundle(collections.Iterable):
 			destination = self.bundleFile
 		currentSection = None
 		with open(destination, "w") as output:
+			if self.__stylesheets:
+				output.write("$" + ",".join(self.__stylesheets) + "\n")
 			for l in self.__lines:
 				if currentSection != l.section:
 					output.write("#" + l.section + "\n")
 					currentSection = l.section
 				output.write(self.__entrystring(l) + "\n")
+
+	@property
+	def stylesheets(self):
+		return self.__stylesheets if self.__stylesheets else []
 
 class BundleProcessor:
 	def __init__(self, bundle):
@@ -104,23 +115,18 @@ class BundleProcessor:
 		except Exception as err:
 			print("Failed to open file: {0}".format(err))
 
-	def markdown(self, output_path, exts=None):
-		extensions = ['abbr','fenced_code','footnotes','tables','codehilite','smarty','toc', 'attr_list','def_list']
-		markdownFromFile(output_path, output_path + ".html", output_format="html5", extensions=extensions if exts==None else exts)
-
 	def merge_to(self, output_path, markdown=False, exts=None):
 		lastSection = ""
 		try:
 			with open(output_path, "w") as output:
 				for input in self.__bundle:
 					if lastSection != input.section and input.section != "":
-						output.write("# {0}\n".format(input.section))
+						output.write("\n# {0}\n".format(input.section))
 						lastSection = input.section
 					if input.description != "":
-						output.write("## {0}\n".format(input.description))
+						output.write("\n## {0}\n".format(input.description))
 					for line in self.__get(input.path):
-						output.write(line + "\n")
-			if markdown:
-				self.markdown(output_path)
+						output.write(line)
+
 		except Exception as err:
 			print("Error writing: {0}".format(err))
