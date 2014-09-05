@@ -116,18 +116,21 @@ class BundleProcessor:
 		except Exception as err:
 			print("Failed to open file: {0}".format(err))
 
-	def merge_to(self, output_path, markdown=False, exts=None):
+	def merge_to(self, output):
 		lastSection = ""
 		try:
-			with open(output_path, "w") as output:
-				for input in self.__bundle:
-					if lastSection != input.section and input.section != "":
+			for input in self.__bundle:
+				if lastSection != input.section and input.section != "":
 						output.write("\n# {0}\n".format(input.section))
 						lastSection = input.section
 					if input.description != "":
 						output.write("\n## {0}\n".format(input.description))
 					for line in self.__get(input.path):
 						output.write(line)
-
 		except Exception as err:
 			print("Error writing: {0}".format(err))
+		return output
+
+	def merge_to_file(self, output_path):
+		with open(output_path, "w") as output:
+			self.merge_to(output)
