@@ -21,9 +21,17 @@ def get_resource(file_path):
 		data = f.read()
 		return base64.urlsafe_b64encode(data)
 
-__url = re.compile("url\(\"(.+)\"\)")
+__url = re.compile(".*url\([\"'](.+)[\"']\).*")
 def css_paths(css_text):
-	return url.match(css_text).groups()
+	match = __url.match(css_text)
+	if match:
+		return match.groups()
+	return []
 
-def replace_inline(css_text, path, data):
-	pass
+def replace_inline(css_text):
+	paths = css_paths(css_text)
+	newtext = css_text
+	for p in paths:
+		uri = datauri(p, get_resource(p))
+		newtext = newtext.replace(p, uri)
+	return newtext
