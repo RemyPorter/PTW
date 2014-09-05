@@ -7,10 +7,11 @@ def get_style(file_path):
 	f = open(file_path, "r")
 	css = f.read()
 	f.close()
-	paths = set(css_paths(css))
+	paths = set(css_paths(css.replace("\n", "")))
 	for p in paths:
 		res = get_resource(p)
-		css.replace(p, datauri(p, res))
+		css = css.replace(p, datauri(p, res))
+	return css
 
 def datauri(sourcefilepath, encoded):
 	_, ext = os.path.splitext(sourcefilepath)
@@ -19,7 +20,7 @@ def datauri(sourcefilepath, encoded):
 def get_resource(file_path):
 	with open(file_path, "rb") as f:
 		data = f.read()
-		return base64.urlsafe_b64encode(data)
+		return base64.urlsafe_b64encode(data).decode("utf8")
 
 __url = re.compile(".*url\([\"'](.+)[\"']\).*")
 def css_paths(css_text):

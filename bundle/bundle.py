@@ -98,6 +98,7 @@ class Bundle(collections.Iterable):
 				output.write(self.__entrystring(l) + "\n")
 
 	@property
+	@loadguard
 	def stylesheets(self):
 		return self.__stylesheets if self.__stylesheets else []
 
