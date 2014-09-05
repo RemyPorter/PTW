@@ -1,6 +1,7 @@
 from markdown.treeprocessors import Treeprocessor
 from markdown.util import etree
 from markdown import markdownFromFile
+import resources
 
 class StyleExtension(Treeprocessor):
 	def __init__(*args, **kwargs):
@@ -24,11 +25,11 @@ class MarkdownProcessor:
 		#pull all the resources in
 		#base64 encode images, insert data:image URL
 		#inject stylesheet files
-		
-	def markdown(self, output_path, extensions=None):
+
+	def markdown(self, input_path, extensions=None):
 		exts = ['abbr','fenced_code','footnotes','tables','codehilite','smarty','toc', 'attr_list','def_list'] if extensions==None else extensions
 		style = ",".join(self.__bundle.stylesheets)
 		styleext = markdownstyle.StyleExtension(configs={"sheets":[style, "The stylesheet list"]})
 		exts += [styleext]
-		markdownFromFile(output_path, output_path + ".html", output_format="html5", extensions=extensions if exts==None else exts)
+		markdownFromFile(input_path, input_path + ".html", output_format="html5", extensions=extensions if exts==None else exts)
 
