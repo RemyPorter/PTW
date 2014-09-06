@@ -86,16 +86,17 @@ class Bundle(collections.Iterable):
 	@loadguard
 	def write(self, destination=None):
 		if destination == None:
-			destination = self.bundleFile
+			output = open(self.bundleFile, "w")
 		currentSection = None
-		with open(destination, "w") as output:
-			if self.__stylesheets:
-				output.write("$" + ",".join(self.__stylesheets) + "\n")
-			for l in self.__lines:
-				if currentSection != l.section:
-					output.write("#" + l.section + "\n")
-					currentSection = l.section
-				output.write(self.__entrystring(l) + "\n")
+		if self.__stylesheets:
+			output.write("$" + ",".join(self.__stylesheets) + "\n")
+		for l in self.__lines:
+			if currentSection != l.section:
+				output.write("#" + l.section + "\n")
+				currentSection = l.section
+			output.write(self.__entrystring(l) + "\n")
+		if destination == None:
+			output.close()
 
 	@property
 	@loadguard
