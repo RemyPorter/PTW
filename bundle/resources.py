@@ -15,12 +15,12 @@ def get_style(file_path):
 
 def datauri(sourcefilepath, encoded):
 	_, ext = os.path.splitext(sourcefilepath)
-	return "data:img/{0},{1}".format(ext[1:], encoded)
+	return "data:image/{0};base64,{1}".format(ext[1:], encoded)
 
 def get_resource(file_path):
 	with open(file_path, "rb") as f:
 		data = f.read()
-		return base64.urlsafe_b64encode(data).decode("utf8")
+		return base64.b64encode(data).decode("utf8")
 
 __url = re.compile(".*url\([\"'](.+)[\"']\).*")
 def css_paths(css_text):
