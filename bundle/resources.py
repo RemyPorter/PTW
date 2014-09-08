@@ -3,8 +3,11 @@ import io
 import re
 import os.path
 
+def __fixpath(path):
+	return os.path.expandvars(os.path.expanduser(path))
+
 def get_style(file_path):
-	f = open(file_path, "r")
+	f = open(__fixpath(file_path), "r")
 	css = f.read()
 	f.close()
 	paths = set(css_paths(css.replace("\n", "")))
@@ -18,9 +21,12 @@ def datauri(sourcefilepath, encoded):
 	return "data:image/{0};base64,{1}".format(ext[1:], encoded)
 
 def get_resource(file_path):
-	with open(file_path, "rb") as f:
-		data = f.read()
-		return base64.b64encode(data).decode("utf8")
+	try:
+		with open(__fixpath(file_path), "rb") as f:
+			data = f.read()
+			return base64.b64encode(data).decode("utf8")
+	except Exception as error:
+		return ""
 
 __url = re.compile(".*url\([\"'](.+)[\"']\).*")
 def css_paths(css_text):
