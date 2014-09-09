@@ -4,6 +4,7 @@ from markdown.util import etree, AtomicString
 from markdown import Markdown
 from markdown.inlinepatterns import Pattern
 import bundle.resources
+import re
 
 class StyleHelper(Treeprocessor):
 	def __init__(self, md, sheets):
@@ -20,12 +21,24 @@ class StyleHelper(Treeprocessor):
 		return root
 
 class ImagePattern(Pattern):
+	def __splitter(self):
+		try:
+			if self.__split == None:
+				self.__split = re.compile('(.+?)="(.+?)"')
+		except:
+			self.__split = re.compile('(.+?)="(.+?)"')
+		return self.__split
+
 	def handleMatch(self, m):
+		global __splitattr
 		img = etree.Element("img")
 		print(m.groups())
 		path = m.groups()[1]
+		attrs = m.groups()[2]
 		data = bundle.resources.datauri(path, bundle.resources.get_resource(path))
 		img.set("src", data)
+		for attr in self.__splitter().findall(attrs):
+			img.set(attr[0], attr[1])
 		return img
 
 
