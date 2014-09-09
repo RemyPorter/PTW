@@ -3,7 +3,7 @@ from markdown.extensions import Extension
 from markdown.util import etree, AtomicString
 from markdown import Markdown
 from markdown.inlinepatterns import Pattern
-import bundle.resources
+import resources
 import re
 
 class StyleHelper(Treeprocessor):
