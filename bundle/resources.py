@@ -30,10 +30,7 @@ def get_resource(file_path):
 
 __url = re.compile(".*url\([\"'](.+)[\"']\).*")
 def css_paths(css_text):
-	match = __url.match(css_text)
-	if match:
-		return match.groups()
-	return []
+	return __url.findall(css_text)
 
 def replace_inline(css_text):
 	paths = css_paths(css_text)
