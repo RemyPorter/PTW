@@ -1,10 +1,12 @@
 """
-A module to create a friendly representation of an underlying hash object. Uses all.padded as its source data.
+A module to create a friendly representation of an underlying hash object. Uses wordlist as its source data.
 
-all.padded is a UTF-16 encoded file with one string every bytes.
+wordlist is a UTF-16 encoded file with one string every bytes.
 
 >>> dehash("21046fd2f17ac0f30c88190393568045256866f2")
 'cassareep irascibly upbrought scorched atheized bourtrees oloroso manful chobdar hornbook'
+>>> enhash('disbowel obi magnetises famous oblivious divulgence thickened welders foiningly votresses')
+'3bc491b57f3a4d1a91da3daae16dfa0052aff75f'
 """
 import inspect, os.path, gzip, json
 from mmap import mmap
@@ -28,7 +30,7 @@ __init__()
 
 def dehash(hash, address_size=4,line_size=15,character_size=2):
 	"""Given a string containing hexadecimal digits, returns a FriendlyHash tuple containing the original string and a "friendly" version
-	from mappedhash. Depends on the contents of all.padded. Address size is the number of hex digits used per word,
+	from mappedhash. Depends on the contents of wordlist. Address size is the number of hex digits used per word,
 	and should be related to the underlying word-file. Line size is how many characters make up a word block, and character size
 	is the number of bytes per character.
 
@@ -60,8 +62,8 @@ def get_at_address(line, line_size, character_size):
 
 def enhash(words, address_size=4):
 	"""
-	Given a word string, containing only words in all.padded, return the hash that it comes from. This assumes that the supplied 
-	wordlist only contains "valid" words, off the all.padded list. It may enter an infinite loop otherwise. (I will fix that, probably)
+	Given a word string, containing only words in wordlist, return the hash that it comes from. This assumes that the supplied 
+	wordlist only contains "valid" words, off the wordlist list. It may enter an infinite loop otherwise. (I will fix that, probably)
 	>>> enhash('disbowel obi magnetises famous oblivious divulgence thickened welders foiningly votresses')
 	'3bc491b57f3a4d1a91da3daae16dfa0052aff75f'
 	>>> enhash('scatology solen courtier retrofit unmasking scantling carjacks arrestors nunship puffball')
