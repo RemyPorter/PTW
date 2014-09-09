@@ -10,11 +10,7 @@ def get_style(file_path):
 	f = open(__fixpath(file_path), "r")
 	css = f.read()
 	f.close()
-	paths = set(css_paths(css.replace("\n", "")))
-	for p in paths:
-		res = get_resource(p)
-		css = css.replace(p, datauri(p, res))
-	return css
+	return replace_inline(css)
 
 def datauri(sourcefilepath, encoded):
 	_, ext = os.path.splitext(sourcefilepath)
