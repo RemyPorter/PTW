@@ -24,9 +24,9 @@ class ImagePattern(Pattern):
 	def __splitter(self):
 		try:
 			if self.__split == None:
-				self.__split = re.compile('(.+?)="(.+?)"')
+				self.__split = re.compile('(.+?)=[\'"](.+?)[\'"]')
 		except:
-			self.__split = re.compile('(.+?)="(.+?)"')
+			self.__split = re.compile('(.+?)=[\'"](.+?)[\'"]')
 		return self.__split
 
 	def handleMatch(self, m):
@@ -46,7 +46,7 @@ class MdStyle(Extension):
 	def extendMarkdown(self, md, md_globals):
 		style = StyleHelper(md, self.config["sheets"][0])
 		md.treeprocessors.add('stylesheets', style, "_end")
-		images = ImagePattern("\[\$img \"(.+?)\"(.*)\]")
+		images = ImagePattern("\[\$img ['\"](.+?)['\"](.*)\]")
 		md.inlinePatterns.add('images', images, "_begin")
 
 class MarkdownProcessor:
