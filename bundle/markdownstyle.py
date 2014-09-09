@@ -3,7 +3,7 @@ from markdown.extensions import Extension
 from markdown.util import etree, AtomicString
 from markdown import Markdown
 from markdown.inlinepatterns import Pattern
-import resources
+from . import resources, bundle
 import re
 
 class StyleHelper(Treeprocessor):
@@ -14,7 +14,7 @@ class StyleHelper(Treeprocessor):
 	def run(self, root):
 		sheets = self.sheets.split(",")
 		for sheet in sheets:
-			css = bundle.resources.get_style(sheet)
+			css = resources.get_style(sheet)
 			elem = etree.Element("style")
 			elem.text = AtomicString(css)
 			root.insert(0,elem)
@@ -35,7 +35,7 @@ class ImagePattern(Pattern):
 		print(m.groups())
 		path = m.groups()[1]
 		attrs = m.groups()[2]
-		data = bundle.resources.datauri(path, bundle.resources.get_resource(path))
+		data = resources.datauri(path, resources.get_resource(path))
 		img.set("src", data)
 		for attr in self.__splitter().findall(attrs):
 			img.set(attr[0], attr[1])

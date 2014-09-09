@@ -2,7 +2,6 @@ from pyparsing import *
 import os.path as pth
 from collections import namedtuple
 import collections
-import markdownstyle
 
 Entry = namedtuple("Entry", "description path section")
 
@@ -122,12 +121,12 @@ class BundleProcessor:
 		try:
 			for input in self.__bundle:
 				if lastSection != input.section and input.section != "":
-						output.write("\n# {0}\n".format(input.section))
-						lastSection = input.section
-					if input.description != "":
-						output.write("\n## {0}\n".format(input.description))
-					for line in self.__get(input.path):
-						output.write(line)
+					output.write("\n# {0}\n".format(input.section))
+					lastSection = input.section
+				if input.description != "":
+					output.write("\n## {0}\n".format(input.description))
+				for line in self.__get(input.path):
+					output.write(line)
 		except Exception as err:
 			print("Error writing: {0}".format(err))
 		return output
