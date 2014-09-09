@@ -32,7 +32,6 @@ class ImagePattern(Pattern):
 	def handleMatch(self, m):
 		global __splitattr
 		img = etree.Element("img")
-		print(m.groups())
 		path = m.groups()[1]
 		attrs = m.groups()[2]
 		data = resources.datauri(path, resources.get_resource(path))
